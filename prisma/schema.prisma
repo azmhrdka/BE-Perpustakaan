@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  id        Int      @id @default(autoincrement())
+  nis       String   @unique
+  name      String
+  email     String?  @unique
+  kelas     String
+  jurusan   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  peminjaman Peminjaman[]
+
+  user User?
+}
+
+model Book {
+  id        Int      @id @default(autoincrement())
+  title     String
+  author    String
+  year      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  peminjaman Peminjaman[]
+}
+
+enum PeminjamanStatus {
+  BORROWED
+  RETURNED
+}
+
+model Peminjaman {
+  id         Int       @id @default(autoincrement())
+  studentId  Int
+  bookId     Int
+  status     String    @default("BORROWED")
+  borrowDate DateTime  @default(now())
+  returnDate DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id])
+  book    Book    @relation(fields: [bookId], references: [id])
+
+  user         User?
+  Pengembalian Pengembalian[]
+}
+
+model Pengembalian {
+  id           Int      @id @default(autoincrement())
+  peminjamanId Int
+  returnDate   DateTime @default(now())
+  denda        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  peminjaman Peminjaman @relation(fields: [peminjamanId], references: [id])
+}
+
+enum UserRole {
+  ADMIN
+  PETUGAS
+  STUDENT
+}
+
+model User {
+  id           Int         @id @default(autoincrement())
+  username     String      @unique
+  password     String
+  role         UserRole
+  studenId     Int?        @unique
+  student      Student?    @relation(fields: [studenId], references: [id])
+  peminjamanId Int?        @unique
+  peminjaman   Peminjaman? @relation(fields: [peminjamanId], references: [id])
+  createdAt    DateTime    @default(now())
+}
