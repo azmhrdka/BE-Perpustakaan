@@ -25,7 +25,7 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.PETUGAS)
+  @Roles(UserRole.ADMIN)
   @Post()
   @ApiOperation({ summary: 'Menambahkan buku (ADMIN only)' })
   create(@Body() createBookDto: CreateBookDto) {
