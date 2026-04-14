@@ -1,9 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'; // ← update
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'; // ← tambah
 
+@ApiTags('students')
+@ApiBearerAuth()         // ← tambah
+@UseGuards(JwtAuthGuard) // ← tambah
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
@@ -15,7 +19,7 @@ export class StudentsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Menampilkan seluruh data siswa' })  
+  @ApiOperation({ summary: 'Menampilkan seluruh data siswa' })
   findAll() {
     return this.studentsService.findAll();
   }

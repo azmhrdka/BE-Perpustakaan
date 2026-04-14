@@ -1,4 +1,4 @@
-import {
+import { 
   Controller,
   Get,
   Post,
@@ -19,11 +19,12 @@ import { UserRole } from '@prisma/client';
 
 @ApiTags('Books')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.PETUGAS)
   @Post()
   @ApiOperation({ summary: 'Menambahkan buku (ADMIN only)' })
