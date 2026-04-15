@@ -19,12 +19,11 @@ import { UserRole } from '@prisma/client';
 
 @ApiTags('Books')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Roles(UserRole.ADMIN)
   @Post()
   @ApiOperation({ summary: 'Menambahkan buku (ADMIN only)' })
@@ -56,6 +55,8 @@ export class BookController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Memperbarui data buku (ADMIN only)' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
     return this.bookService.update(+id, updateBookDto);
   }
