@@ -62,6 +62,8 @@ export class BookController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Menghapus buku (ADMIN only)' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
   remove(@Param('id') id: string) {
     return this.bookService.remove(+id);
   }
