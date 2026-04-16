@@ -8,9 +8,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
 
-  const reflector = app.get(Reflector);
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
-
   const config = new DocumentBuilder()
     .setTitle('Library API')
     .setDescription('Backend API Sistem Perpustakaan')
