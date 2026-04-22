@@ -5,19 +5,18 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorater'; // ← tambah
-import { UserRole } from '@prisma/client'; // ← tambah
+import { Roles } from '../auth/decorators/roles.decorater'; 
+import { UserRole } from '@prisma/client'; 
 
 @ApiTags('students')
 @ApiBearerAuth()
-// ❌ Hapus @UseGuards(JwtAuthGuard) dari sini
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN,) // ← ADMIN & PETUGAS bisa tambah siswa
+  @Roles(UserRole.ADMIN,) 
   @ApiOperation({ summary: 'Menambahkan siswa baru' })
   create(@Body() dto: CreateStudentDto) {
     return this.studentsService.create(dto);

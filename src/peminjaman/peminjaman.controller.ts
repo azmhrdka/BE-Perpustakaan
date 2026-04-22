@@ -9,7 +9,6 @@ import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'; // ← u
 
 @ApiTags('peminjaman')
 @ApiBearerAuth()         // ← tambah
-@UseGuards(JwtAuthGuard) // ← tambah (global untuk semua route)
 @Controller('peminjaman')
 export class PeminjamanController {
   constructor(private readonly peminjamanService: PeminjamanService) {}
@@ -23,25 +22,31 @@ export class PeminjamanController {
   }
 
   @Get()
+  @UseGuards(RolesGuard, JwtAuthGuard)
+  @Roles(UserRole.ADMIN, UserRole.PETUGAS)
   @ApiOperation({ summary: 'Menampilkan seluruh data peminjaman' })
   findAll() {
     return this.peminjamanService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(RolesGuard, JwtAuthGuard)
+  @Roles(UserRole.ADMIN, UserRole.PETUGAS)
   @ApiOperation({ summary: 'Menampilkan detail peminjaman berdasarkan ID' })
   findOne(@Param('id') id: number) {
     return this.peminjamanService.findOne(id);
   }
 
   @Get('date/:date')
+  @UseGuards(RolesGuard, JwtAuthGuard)
+  @Roles(UserRole.ADMIN, UserRole.PETUGAS)
   @ApiOperation({ summary: 'Mencari peminjaman berdasarkan tanggal' })
   findByDate(@Param('date') date: string) {
     return this.peminjamanService.findByDate(date);
   }
 
   @Patch(':id/return')
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Roles(UserRole.ADMIN, UserRole.PETUGAS)
   @ApiOperation({ summary: 'Mengembalikan buku (ADMIN, PETUGAS only)' })
   returnBook(@Param('id') id: string) {
